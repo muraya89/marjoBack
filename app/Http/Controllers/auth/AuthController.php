@@ -4,9 +4,12 @@ namespace App\Http\Controllers\auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\UserRegistrationNotice;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -46,13 +49,26 @@ class AuthController extends Controller
                 'id_number' => 'required|integer',
                 'password'=>'required|min:8',
             ]);
-            $user = new User();
-            $user = $user->create($request->all());
-            $user->password = Hash::make( $request->password );
-            $user->save();
+            $user = User::create([
+                "email"=> $request->email,
+                "first_name"=> $request->first_name,
+                "id_number"=> $request->id_number,
+                "last_name"=> $request->last_name,
+                "password"=> Hash::make( $request->password ),
+                "phone_number"=> $request->phone_number,
+                'activation_code' => mt_rand(9,9999),
+                'ip_address'=> $request->getClientIp(),
+            ]);
+            // $user->save();
+
+            if(User::where('email', $request->email))
+                $user->notify(new UserRegistrationNotice($user));
+                // dd($user);
+                // User::find(Auth::id());
+
             return [
-                'success' => 0,
-                'msg' => 'Success',
+                'success' => Response::HTTP_OK,
+                'message' => 'Kindly confirm your email address using the link sent to your account',
                 'data' => [
                     'user' => $user->refresh(),
                     'token'=> $user->createToken('Marjo')->accessToken,

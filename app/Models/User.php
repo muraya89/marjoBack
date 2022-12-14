@@ -27,6 +27,7 @@ class User extends Authenticatable
         'last_login',
         'ip_address',
         'password',
+        'activation_code',
     ];
 
     /**
