@@ -71,7 +71,7 @@ class UserRegistrationNotice extends Notification
                         $greetings = "Good night";
                     }
 
-        $url = config('app.url').'/auth/email-verification/' . $this->user->activation_code;
+        $url = config('app.url').'/auth/email-verification/' . base64_encode($this->user->activation_code);
         $name=$this->user->first_name . ' ' . $this->user->last_name;
         return (new MailMessage)
         // Before you can start with us, you need to verify your email address.

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('last_login')->nullable();
             $table->string('ip_address')->nullable();
+            $table->boolean('active')->default(0);
             $table->string('activation_code')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

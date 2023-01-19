@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\auth;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +22,7 @@ class AuthController extends Controller
      */
     public function index()
     {
-        $users = $this->users();
+        //
     }
 
     /**
@@ -58,6 +59,7 @@ class AuthController extends Controller
                 "phone_number"=> $request->phone_number,
                 'activation_code' => mt_rand(9,9999),
                 'ip_address'=> $request->getClientIp(),
+                'last_login'=> Carbon::now(),
             ]);
             // $user->save();
 
@@ -68,7 +70,7 @@ class AuthController extends Controller
 
             return [
                 'success' => Response::HTTP_OK,
-                'message' => 'Kindly confirm your email address using the link sent to your account',
+                'message' => 'Kindly verify your account using the link sent to your email',
                 'data' => [
                     'user' => $user->refresh(),
                     'token'=> $user->createToken('Marjo')->accessToken,
@@ -128,5 +130,47 @@ class AuthController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function verifyAccount($code)
+    {
+       try {
+        $code = base64_decode($code);
+        $user = User::where('activation_code', $code)->first();
+        if($user && $user->active === 1){
+            return ['success' => 0,
+                    'message' => "Your account has already been activated"
+                ];
+        }else if(!$user){
+            return ['success' => 0,
+                    'message' => "Invalid URL, kindly contact the administrator for assistance."
+                ];
+        }
+        User::where('activation_code', $code)->update([
+            'active' => 1,
+            'email_verified_at' => Carbon::now(),
+            'activation_code' => null,
+        ]);
+        return ['success' => 1,
+            'message' => "You have successfully activated your account.",
+            'data' => [
+                'user' => $user->refresh()
+            ]
+        ];
+
+       } catch (\Exception $exception) {
+        return response()->json([
+            'success' => false,
+            'message'   => $exception->getMessage(),
+        ], Response::HTTP_BAD_REQUEST);
+        Log::error($exception->getMessage(), [$exception]);
+       }
+    }
+
+    public function logout(Request $request){
+        $request->user()->tokens()->delete();
+        return ['success' => 1,
+            'message' => "logout success."
+        ];
     }
 }
