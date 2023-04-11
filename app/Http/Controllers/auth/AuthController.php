@@ -167,9 +167,42 @@ class AuthController extends Controller
        }
     }
 
+    public function login(Request $request)
+    {
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            if(empty($user)) {
+                return [
+                    'success' => Response::HTTP_NOT_FOUND,
+                    'message' => 'User not found'
+                ];
+            }else {
+                return [
+                    'success' => Response::HTTP_CONTINUE,
+                    'message' => 'Success',
+                    'data' => [
+                        'user' => $user->refresh(),
+                        'token'=> $user->createToken('Marjo')->accessToken,
+                    ]
+                ];
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success'   =>false,
+                'message'   => $exception->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
+
+            Log::error($exception->getMessage(), [$exception]);
+        }
+    }
+
     public function logout(Request $request){
+
         $request->user()->tokens()->delete();
-        return ['success' => 1,
+
+        return [
+            'success' => Response::HTTP_CONTINUE,
             'message' => "logout success."
         ];
     }
