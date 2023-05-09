@@ -9,6 +9,12 @@ class Car extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'model','brand','seats','transmission','fuel_type','mileage','year','status','color','location_id'
+    ];
+
+    // protected $appends = ['location'];
+
     // This model defines the relationships between Car and Booking (one-to-many)
     public function bookings()
     {
@@ -20,4 +26,9 @@ class Car extends Model
     {
         return $this->belongsTo('App\Models\Location');
     }
+
+    // public function getLocationAttribute()
+    // {
+    //     return $this->location();
+    // }
 }

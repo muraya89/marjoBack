@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\Route;
     Route::group(['prefix' => 'v1'], function () {
         //Auth Routes
         Route::prefix('auth')->group(base_path('routes/modules/auth.php'));
+
+        // Profile routes
         Route::prefix('profile')->group(base_path('routes/modules/Profile.php'));
+
+        // Car routes
+        Route::prefix('cars')->group(base_path('routes/modules/cars.php'));
     });
 // });
