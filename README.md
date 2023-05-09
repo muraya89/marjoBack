@@ -66,12 +66,12 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-#installation
+##Installation
 composer i
 php artisan migrate
 php artisan passport:install
 
-#running
+##Running
 php artisan serve
     or
 php artisan serve --port=<port number>
