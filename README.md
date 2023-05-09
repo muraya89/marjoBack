@@ -74,4 +74,4 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ## Running
 - **php artisan serve**
     **or**
-**php artisan serve --port=<port number>**
+**php artisan serve --port={port number}**
