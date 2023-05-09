@@ -71,6 +71,7 @@ composer i
 php artisan migrate
 php artisan passport:install
 
+## Laravel Sponsors
 ## Running
 php artisan serve
     or
