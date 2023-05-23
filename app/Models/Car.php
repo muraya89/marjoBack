@@ -10,7 +10,7 @@ class Car extends Model
     use HasFactory;
 
     protected $fillable = [
-        'model','brand','seats','transmission','fuel_type','mileage','year','status','color','location_id'
+        'model','brand','seats','transmission','fuel_type','mileage','year','status','color','location_id','image'
     ];
 
     // protected $appends = ['location'];
