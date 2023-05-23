@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('model')->nullable();
             $table->string('brand')->nullable();
             $table->string('color')->nullable();
+            $table->string('image')->nullable();
             $table->integer('seats')->nullable();
             $table->string('transmission')->nullable();
             $table->string('fuel_type')->nullable();
@@ -25,7 +26,6 @@ return new class extends Migration
             $table->integer('year')->nullable();
             $table->string('status')->nullable();
             $table->unsignedBigInteger('location_id')->nullable();
-            $table->foreign('location_id')->references('id')->on('locations');
             $table->timestamps();
         });
     }
