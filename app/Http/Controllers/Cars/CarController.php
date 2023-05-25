@@ -45,7 +45,7 @@ class CarController extends Controller
                 $images = [];
 
                 foreach($files as $index => $file) {
-                    $path = $file->storeAs('public/car_images', $car->id.'.'.$index.'_carImage.'.$file->getClientOriginalExtension());
+                    $path = $file->storeAs('public/car_images/car'.$car->id, $car->id.'.'.$index.'_carImage.'.$file->getClientOriginalExtension());
                     $images[] = $path;
                 }                
                 $car->image = json_encode($images);
@@ -66,28 +66,31 @@ class CarController extends Controller
     {
         try {
             $car = Car::findOrFail($id);
-    
-            dd($request->all());
+            $data = $request->all();
+
             if($request->hasFile('images')){
                 $files= $request->file('images');
                 $images = [];
 
                 foreach ($files as $index => $file) {
-                    $filename = 'car_images/'.$id.'_'.$file->getClientOriginalExtension();
-                    dd($filename);
+                    $filename = $id.'.'.$index.'_carImages.'.$file->getClientOriginalExtension();
+                    
                     if(Storage::exists($filename))
                         Storage::delete($filename);
-                    }
+                    $path = $file->storeAs('public/car_images/car'.$id, $filename);
+                    $images[] = $path;
+                }
+                $data['image'] = json_encode($images);
+                    
             }
             
-            // $request->file('image')->storeAs('car_images', $filename);
-            // $car->update($request->all());
+            $car->update($data);
     
-            // return response()->json([
-            //     'success' => Response::HTTP_OK,
-            //     'message' => 'Car successfully updated',
-            //     'data' => $car
-            // ]);
+            return response()->json([
+                'success' => Response::HTTP_OK,
+                'message' => 'Car successfully updated',
+                'data' => $car
+            ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
     
