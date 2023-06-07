@@ -16,7 +16,11 @@ class CarController extends Controller
     public function index(Request $requst)
     {
         try {
-            return response()->json(Car::all());
+            return response()->json([
+                'success' => Response::HTTP_CONTINUE,
+                'message' => 'Success',
+                'data' => Car::all()
+                ]);
         } catch (\Exception $e) {
             return $e;
         }
@@ -87,12 +91,17 @@ class CarController extends Controller
                 $images = [];
 
                 foreach ($files as $index => $file) {
-                    $filename = $id.'.'.$index.'_carImages.'.$file->getClientOriginalExtension();
-                    
-                    if(Storage::exists($filename))
+                    $filename = preg_replace('/\s+/', '', $file->getClientOriginalName());
+                
+                    if (Storage::exists($filename)) {
+                        dd('exists'); // This line will prevent the following line from executing
                         Storage::delete($filename);
-                    $path = $file->storeAs('public/car_images/car'.$id, $filename);
-                    $images[] = $path;
+                    }
+                    
+                    // $path = $file->storeAs('public/car_images/car'.$id, $filename);
+                    Storage::disk('public')->put('car_images/car'.$id."/".$filename, file_get_contents($file));
+                    
+                    $images[] = $filename;
                 }
                 $data['image'] = json_encode($images);
                     
